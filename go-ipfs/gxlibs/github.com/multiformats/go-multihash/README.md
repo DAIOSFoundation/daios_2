@@ -1,14 +1,14 @@
 # go-multihash
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
-[![](https://img.shields.io/badge/project-multiformats-blue.svg?style=flat-square)](https://github.com/multiformats/multiformats)
+[![](https://img.shields.io/badge/project-multiformats-blue.svg?style=flat-square)](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multiformats)
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](https://webchat.freenode.net/?channels=%23ipfs)
 [![](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-[![GoDoc](https://godoc.org/github.com/multiformats/go-multihash?status.svg)](https://godoc.org/github.com/multiformats/go-multihash)
+[![GoDoc](https://godoc.org/github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multihash?status.svg)](https://godoc.org/github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multihash)
 [![Travis CI](https://img.shields.io/travis/multiformats/go-multihash.svg?style=flat-square&branch=master)](https://travis-ci.org/multiformats/go-multihash)
 [![codecov.io](https://img.shields.io/codecov/c/github/multiformats/go-multihash.svg?style=flat-square&branch=master)](https://codecov.io/github/multiformats/go-multihash?branch=master)
 
-> [multihash](https://github.com/multiformats/multihash) implementation in Go
+> [multihash](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multihash) implementation in Go
 
 ## Table of Contents
 
@@ -23,7 +23,7 @@
 `go-multihash` is a standard Go module which can be installed with:
 
 ```sh
-go get github.com/multiformats/go-multihash
+go get github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multihash
 ```
 
 Note that `go-multihash` is packaged with Gx, so it is recommended to use Gx to install and use it (see Usage section).
@@ -39,7 +39,7 @@ go get -u github.com/whyrusleeping/gx
 go get -u github.com/whyrusleeping/gx-go
 cd <your-project-repository>
 gx init
-gx import github.com/multiformats/go-multihash
+gx import github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multihash
 gx install --global
 gx-go --rewrite
 ```
@@ -61,7 +61,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/multiformats/go-multihash"
+	"github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multihash"
 )
 
 func main() {
@@ -100,9 +100,9 @@ Captain: [@Kubuxu](https://github.com/Kubuxu).
 
 ## Contribute
 
-Contributions welcome. Please check out [the issues](https://github.com/multiformats/go-multihash/issues).
+Contributions welcome. Please check out [the issues](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multihash/issues).
 
-Check out our [contributing document](https://github.com/multiformats/multiformats/blob/master/contributing.md) for more information on how we work, and about contributing in general. Please be aware that all interactions related to multiformats are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
+Check out our [contributing document](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multiformats/blob/master/contributing.md) for more information on how we work, and about contributing in general. Please be aware that all interactions related to multiformats are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
 
 Small note: If editing the README, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 

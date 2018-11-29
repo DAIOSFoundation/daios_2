@@ -12,6 +12,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net"
 	"net/http"
 	_ "net/http/pprof"
@@ -588,15 +589,51 @@ func uploadMux(path string) corehttp.ServeOption {
 	return func(node *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 
-			if r.Method != "GET" {
+			if r.Method != "POST" {
+				return
+			}
+			var fileHeader *multipart.FileHeader
+			var e error
+
+			file, fileHeader, e := r.FormFile("file")
+			if e != nil {
+				fmt.Errorf("Failed FormFile:", e)
+				fmt.Println(file)
 				return
 			}
 
-			p := r.FormValue("filePath")
+			filePath := "./files/" + fileHeader.Filename
+			saveFile, e := os.Create(filePath)
 
-			fmt.Println("filepath :", p)
+			if e != nil {
+				fmt.Errorf("Failed os.reate:", e)
+				return
+			}
+			defer saveFile.Close()
+			defer file.Close()
 
-			k, err := coreunix.AddR(node, p)
+			buff := make([]byte, 1024)
+
+			for {
+
+				cnt, err := file.Read(buff)
+				if err != nil && err != io.EOF {
+					panic(err)
+				}
+
+				if cnt == 0 {
+					break
+				}
+
+				_, err = saveFile.Write(buff[:cnt])
+				if err != nil {
+					panic(err)
+				}
+			}
+
+			fmt.Println("filepath :", filePath)
+
+			k, err := coreunix.AddR(node, filePath)
 
 			if err != nil {
 				log.Fatalf("Failed to coreunix.AddR: %v", err)
@@ -628,28 +665,53 @@ func downloadMux(key string) corehttp.ServeOption {
 			if r.Method != "GET" {
 				return
 			}
-			p := r.FormValue("filePath")
+
 			k := r.FormValue("key")
 
 			fmt.Println("key : ", k)
-			fmt.Println("filePath : ", p)
 
 			rd, err := coreunix.Cat(node.Context(), node, k)
 
 			if err != nil {
 				log.Fatalf("Failed coreunix.AddR: %v", err)
+				return
 			}
 
 			data, err := ioutil.ReadAll(rd)
 			if err != nil {
 				log.Fatalf("Failed ReadAll: %v", err)
+				return
 			}
 
-			err = ioutil.WriteFile(p, data, 0644)
+			err = ioutil.WriteFile("./files/test.jpg", data, 0644)
 
 			if err != nil {
 				log.Fatalf("Failed WriteFile: %v", err)
+				return
 			}
+
+			d, err := ioutil.ReadFile("./files/swarm.txt")
+			if err != nil {
+				log.Fatalf("Failed WriteFile: %v", err, d)
+				return
+			}
+
+			filename := "./files/test.jpg"
+			file, err := os.Open(filename)
+			defer file.Close()
+			if err != nil {
+				http.Error(w, "File not found.", 404)
+				return
+			}
+			defer file.Close()
+			fileStat, _ := file.Stat()
+			fileSize := strconv.FormatInt(fileStat.Size(), 10)
+
+			w.Header().Set("Content-Disposition", "attachment; filename="+filename)
+			w.Header().Set("Content-Length", fileSize)
+
+			file.Seek(0, 0)
+			io.Copy(w, file)
 
 		})
 		return mux, nil

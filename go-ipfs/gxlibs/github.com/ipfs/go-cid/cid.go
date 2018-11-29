@@ -14,9 +14,9 @@
 //
 // As shown above, the CID implementation relies heavily on Multiformats,
 // particularly Multibase
-// (https://github.com/multiformats/go-multibase), Multicodec
-// (https://github.com/multiformats/multicodec) and Multihash
-// implementations (https://github.com/multiformats/go-multihash).
+// (https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multibase), Multicodec
+// (https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multicodec) and Multihash
+// implementations (https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multihash).
 package cid
 
 import (
@@ -55,7 +55,7 @@ var (
 
 // These are multicodec-packed content types. The should match
 // the codes described in the authoritative document:
-// https://github.com/multiformats/multicodec/blob/master/table.csv
+// https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multicodec/blob/master/table.csv
 const (
 	Raw = 0x55
 

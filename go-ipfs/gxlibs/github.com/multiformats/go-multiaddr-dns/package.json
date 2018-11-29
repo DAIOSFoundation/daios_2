@@ -1,10 +1,10 @@
 {
   "author": "lgierth",
   "bugs": {
-    "url": "https://github.com/multiformats/go-multiaddr-dns/issues"
+    "url": "https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr-dns/issues"
   },
   "gx": {
-    "dvcsimport": "github.com/multiformats/go-multiaddr-dns"
+    "dvcsimport": "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr-dns"
   },
   "gxDependencies": [
     {

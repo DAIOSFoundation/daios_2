@@ -1,17 +1,17 @@
 # go-multistream
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
-[![](https://img.shields.io/badge/project-multiformats-blue.svg?style=flat-square)](https://github.com/multiformats/multiformats)
+[![](https://img.shields.io/badge/project-multiformats-blue.svg?style=flat-square)](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multiformats)
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](https://webchat.freenode.net/?channels=%23ipfs)
 [![](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-[![GoDoc](https://godoc.org/github.com/multiformats/go-multistream?status.svg)](https://godoc.org/github.com/multiformats/go-multistream)
+[![GoDoc](https://godoc.org/github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multistream?status.svg)](https://godoc.org/github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multistream)
 [![Travis CI](https://img.shields.io/travis/multiformats/go-multistream.svg?style=flat-square&branch=master)](https://travis-ci.org/multiformats/go-multistream)
 [![codecov.io](https://img.shields.io/codecov/c/github/multiformats/go-multistream.svg?style=flat-square&branch=master)](https://codecov.io/github/multiformats/go-multistream?branch=master)
 
 > an implementation of the multistream protocol in go
 
 This package implements a simple stream router for the multistream-select protocol.
-The protocol is defined [here](https://github.com/multiformats/multistream-select).
+The protocol is defined [here](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multistream-select).
 
 ## Table of Contents
 
@@ -27,7 +27,7 @@ The protocol is defined [here](https://github.com/multiformats/multistream-selec
 `go-multistream` is a standard Go module which can be installed with:
 
 ```sh
-go get github.com/multiformats/go-multistream
+go get github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multistream
 ```
 
 Note that `go-multistream` is packaged with Gx, so it is recommended to use Gx to install and use it (see Usage section).
@@ -44,7 +44,7 @@ go get -u github.com/whyrusleeping/gx
 go get -u github.com/whyrusleeping/gx-go
 cd <your-project-repository>
 gx init
-gx import github.com/multiformats/go-multistream
+gx import github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multistream
 gx install --global
 gx-go --rewrite
 ```
@@ -66,7 +66,7 @@ import (
 	"io/ioutil"
 	"net"
 
-	ms "github.com/multiformats/go-multistream"
+	ms "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multistream"
 )
 
 // This example creates a multistream muxer, adds handlers for the protocols
@@ -142,9 +142,9 @@ Captain: [@whyrusleeping](https://github.com/whyrusleeping).
 
 ## Contribute
 
-Contributions welcome. Please check out [the issues](https://github.com/multiformats/go-multistream/issues).
+Contributions welcome. Please check out [the issues](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multistream/issues).
 
-Check out our [contributing document](https://github.com/multiformats/multiformats/blob/master/contributing.md) for more information on how we work, and about contributing in general. Please be aware that all interactions related to multiformats are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
+Check out our [contributing document](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multiformats/blob/master/contributing.md) for more information on how we work, and about contributing in general. Please be aware that all interactions related to multiformats are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
 
 Small note: If editing the README, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 

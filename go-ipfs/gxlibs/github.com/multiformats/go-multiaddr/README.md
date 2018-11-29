@@ -1,13 +1,13 @@
 # go-multiaddr
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
-[![](https://img.shields.io/badge/project-multiformats-blue.svg?style=flat-square)](https://github.com/multiformats/multiformats)
+[![](https://img.shields.io/badge/project-multiformats-blue.svg?style=flat-square)](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multiformats)
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](https://webchat.freenode.net/?channels=%23ipfs)
 [![](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 [![Travis CI](https://img.shields.io/travis/multiformats/go-multiaddr.svg?style=flat-square&branch=master)](https://travis-ci.org/multiformats/go-multiaddr)
 [![codecov.io](https://img.shields.io/codecov/c/github/multiformats/go-multiaddr.svg?style=flat-square&branch=master)](https://codecov.io/github/multiformats/go-multiaddr?branch=master)
 
-> [multiaddr](https://github.com/multiformats/multiaddr) implementation in go
+> [multiaddr](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multiaddr) implementation in go
 
 Multiaddr is a standard way to represent addresses that:
 
@@ -33,7 +33,7 @@ Multiaddr is a standard way to represent addresses that:
 ## Install
 
 ```sh
-go get github.com/multiformats/go-multiaddr
+go get github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr
 ```
 
 ## Usage
@@ -43,7 +43,7 @@ go get github.com/multiformats/go-multiaddr
 #### Simple
 
 ```go
-import ma "github.com/multiformats/go-multiaddr"
+import ma "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr"
 
 // construct from a string (err signals parse failure)
 m1, err := ma.NewMultiaddr("/ip4/127.0.0.1/udp/1234")
@@ -73,7 +73,7 @@ m1.Protocols()
 #### En/decapsulate
 
 ```go
-import ma "github.com/multiformats/go-multiaddr"
+import ma "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr"
 
 m, err := ma.NewMultiaddr("/ip4/127.0.0.1/udp/1234")
 // <Multiaddr /ip4/127.0.0.1/udp/1234>
@@ -109,9 +109,9 @@ Captain: [@whyrusleeping](https://github.com/whyrusleeping).
 
 ## Contribute
 
-Contributions welcome. Please check out [the issues](https://github.com/multiformats/go-multiaddr/issues).
+Contributions welcome. Please check out [the issues](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr/issues).
 
-Check out our [contributing document](https://github.com/multiformats/multiformats/blob/master/contributing.md) for more information on how we work, and about contributing in general. Please be aware that all interactions related to multiformats are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
+Check out our [contributing document](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multiformats/blob/master/contributing.md) for more information on how we work, and about contributing in general. Please be aware that all interactions related to multiformats are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
 
 Small note: If editing the README, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 

@@ -1,10 +1,10 @@
 {
   "author": "multiformats",
   "bugs": {
-    "url": "https://github.com/multiformats/go-multiaddr-net"
+    "url": "https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr-net"
   },
   "gx": {
-    "dvcsimport": "github.com/multiformats/go-multiaddr-net"
+    "dvcsimport": "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr-net"
   },
   "gxDependencies": [
     {

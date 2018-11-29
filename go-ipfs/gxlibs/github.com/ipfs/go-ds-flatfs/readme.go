@@ -3,7 +3,7 @@ package flatfs
 var README_IPFS_DEF_SHARD = `This is a repository of IPLD objects. Each IPLD object is in a single file,
 named <base32 encoding of cid>.data. Where <base32 encoding of cid> is the
 "base32" encoding of the CID (as specified in
-https://github.com/multiformats/multibase) without the 'B' prefix.
+https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multibase) without the 'B' prefix.
 All the object files are placed in a tree of directories, based on a
 function of the CID. This is a form of sharding similar to
 the objects directory in git repositories. Previously, we used

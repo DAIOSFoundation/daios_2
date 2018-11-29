@@ -1,5 +1,5 @@
 // Package multihash is the Go implementation of
-// https://github.com/multiformats/multihash, or self-describing
+// https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multihash, or self-describing
 // hashes.
 package multihash
 

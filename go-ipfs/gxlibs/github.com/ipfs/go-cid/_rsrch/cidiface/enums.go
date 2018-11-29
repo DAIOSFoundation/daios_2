@@ -2,7 +2,7 @@ package cid
 
 // These are multicodec-packed content types. The should match
 // the codes described in the authoritative document:
-// https://github.com/multiformats/multicodec/blob/master/table.csv
+// https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multicodec/blob/master/table.csv
 const (
 	Raw = 0x55
 

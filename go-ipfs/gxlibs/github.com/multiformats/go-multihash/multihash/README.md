@@ -2,15 +2,15 @@
 
 The `multihash` tool uses `go-multihash` to hash things much like `shasum`.
 
-Warning: this is a **multihash** tool! Its digests follow the [multihash](https://github.com/multiformats/multihash) format.
+Warning: this is a **multihash** tool! Its digests follow the [multihash](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multihash) format.
 
 ### Install
 
 - From Source:
     ```
-    go get github.com/multiformats/go-multihash/multihash
+    go get github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multihash/multihash
     ```
-- Precompiled Binaries: https://gobuilder.me/github.com/multiformats/go-multihash/multihash
+- Precompiled Binaries: https://gobuilder.me/github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multihash/multihash
 
 ### Usage
 

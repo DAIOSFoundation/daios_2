@@ -246,7 +246,7 @@ see are *CIDv0* CIDs (those starting with `Qm`) which are *always* base58
 encoded and are therefore case-sensitive.
 
 Fortunately, CIDv1 (the latest CID format) supports arbitrary bases using the
-[multibase](https://github.com/multiformats/multibase/) standard. Unfortunately,
+[multibase](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multibase/) standard. Unfortunately,
 IPFS has always treated equivalent CIDv0 and CIDv1 CIDs as distinct. This means
 that files added with CIDv0 CIDs (the default) can't be looked up using the
 equivalent CIDv1.
@@ -1004,13 +1004,13 @@ remove them before updating.
   - Improve allocation patterns of slices in bitswap ([ipfs/go-ipfs#4458](https://github.com/ipfs/go-ipfs/pull/4458))
   - Secio handshake now happens synchronously ([libp2p/go-libp2p-secio#25](https://github.com/libp2p/go-libp2p-secio/pull/25))
   - Don't block closing connections on pending writes ([libp2p/go-msgio#7](https://github.com/libp2p/go-msgio/pull/7))
-  - Improve memory usage of multiaddr parsing ([multiformats/go-multiaddr#56](https://github.com/multiformats/go-multiaddr/pull/56))
+  - Improve memory usage of multiaddr parsing ([multiformats/go-multiaddr#56](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr/pull/56))
   - Don't lock up 256KiB buffers when adding small files ([ipfs/go-ipfs#4508](https://github.com/ipfs/go-ipfs/pull/4508))
   - Clear out memory after reads from the dagreader ([ipfs/go-ipfs#4525](https://github.com/ipfs/go-ipfs/pull/4525))
   - Improve error handling in ipfs ping ([ipfs/go-ipfs#4546](https://github.com/ipfs/go-ipfs/pull/4546))
   - Allow install.sh to be run without being the script dir ([ipfs/go-ipfs#4547](https://github.com/ipfs/go-ipfs/pull/4547))
   - Much faster base58 encoding ([libp2p/go-libp2p-peer#24](https://github.com/libp2p/go-libp2p-peer/pull/24))
-  - Use faster sha256 and blake2b libs ([multiformats/go-multihash#63](https://github.com/multiformats/go-multihash/pull/63))
+  - Use faster sha256 and blake2b libs ([multiformats/go-multihash#63](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multihash/pull/63))
   - Greatly improve peerstore memory usage ([libp2p/go-libp2p-peerstore#22](https://github.com/libp2p/go-libp2p-peerstore/pull/22))
   - Improve dht memory usage and peer tracking ([libp2p/go-libp2p-kad-dht#111](https://github.com/libp2p/go-libp2p-kad-dht/pull/111))
   - New libp2p metrics lib with lower overhead ([libp2p/go-libp2p-metrics#8](https://github.com/libp2p/go-libp2p-metrics/pull/8))

@@ -1,6 +1,6 @@
 // Package multistream implements a simple stream router for the
 // multistream-select protocoli. The protocol is defined at
-// https://github.com/multiformats/multistream-select
+// https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multistream-select
 package multistream
 
 import (

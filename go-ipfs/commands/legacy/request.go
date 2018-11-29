@@ -7,9 +7,9 @@ import (
 	"os"
 	"reflect"
 
-	files "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-files"
-	"github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmds"
 	"github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmdkit"
+	"github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmds"
+	files "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-files"
 
 	oldcmds "github.com/dai/go-ipfs/commands"
 )

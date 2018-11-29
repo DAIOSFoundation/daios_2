@@ -1,5 +1,5 @@
 // Package manet provides Multiaddr
-// (https://github.com/multiformats/go-multiaddr) specific versions of common
+// (https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr) specific versions of common
 // functions in Go's standard `net` package. This means wrappers of standard
 // net symbols like `net.Dial` and `net.Listen`, as well as conversion to
 // and from `net.Addr`.

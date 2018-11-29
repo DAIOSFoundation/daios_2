@@ -15,8 +15,8 @@ IPFS uses a set of value type that is useful to enumerate up front:
 
 - `<ipfs-path>` is unix-style path, beginning with `/ipfs/<cid>/...` or
   `/ipns/<hash>/...` or `/ipns/<domain>/...`.
-- `<hash>` is a base58 encoded [multihash](https://github.com/multiformats/multihash)
-- `cid` is a [multibase](https://github.com/multiformats/multibase) encoded
+- `<hash>` is a base58 encoded [multihash](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multihash)
+- `cid` is a [multibase](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multibase) encoded
   [CID](https://github.com/ipld/cid) - a self-describing content-addressing identifier
 
 A note on streams: IPFS is a streaming protocol. Everything about it can be

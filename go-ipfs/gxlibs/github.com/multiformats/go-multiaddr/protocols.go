@@ -1,7 +1,7 @@
 package multiaddr
 
 // You **MUST** register your multicodecs with
-// https://github.com/multiformats/multicodec before adding them here.
+// https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multicodec before adding them here.
 //
 // TODO: Use a single source of truth for all multicodecs instead of
 // distributing them like this...

@@ -1,6 +1,6 @@
 # hang-fds - stress test your network listeners
 
-This module will open a bunch of connections to a given [multiaddr](https://github.com/multiformats/multiaddr), and hang them. It is meant to stress test your network listeners.
+This module will open a bunch of connections to a given [multiaddr](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multiaddr), and hang them. It is meant to stress test your network listeners.
 
 ### Install
 

@@ -1,10 +1,10 @@
 {
   "author": "whyrusleeping",
   "bugs": {
-    "url": "https://github.com/multiformats/go-multistream"
+    "url": "https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multistream"
   },
   "gx": {
-    "dvcsimport": "github.com/multiformats/go-multistream"
+    "dvcsimport": "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multistream"
   },
   "gxVersion": "0.7.0",
   "language": "go",

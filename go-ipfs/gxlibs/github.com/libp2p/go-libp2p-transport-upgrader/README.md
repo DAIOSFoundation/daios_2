@@ -20,7 +20,7 @@ To use, construct a new `Upgrader` with:
 * A mandatory [stream multiplexer transport][smux].
 
 [tpt]: https://github.com/libp2p/go-libp2p-transport
-[manet]: https://github.com/multiformats/go-multiaddr-net
+[manet]: https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr-net
 [ss]: https://github.com/libp2p/go-conn-security
 [smux]: https://github.com/libp2p/go-stream-muxer
 [pnet]: https://github.com/libp2p/go-libp2p-interface-pnet
@@ -65,9 +65,9 @@ import (
 
 	tptu "github.com/libp2p/go-libp2p-transport-upgrader"
 
-	ma "github.com/multiformats/go-multiaddr"
+	ma "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr"
 	mafmt "github.com/whyrusleeping/mafmt"
-	manet "github.com/multiformats/go-multiaddr-net"
+	manet "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr-net"
 	tpt "github.com/libp2p/go-libp2p-transport"
 )
 

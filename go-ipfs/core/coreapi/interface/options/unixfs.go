@@ -139,7 +139,7 @@ func (unixfsOpts) CidVersion(version int) UnixfsAddOption {
 
 // Hash function to use. Implies CIDv1 if not set to sha2-256 (default).
 //
-// Table of functions is declared in https://github.com/multiformats/go-multihash/blob/master/multihash.go
+// Table of functions is declared in https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multihash/blob/master/multihash.go
 func (unixfsOpts) Hash(mhtype uint64) UnixfsAddOption {
 	return func(settings *UnixfsAddSettings) error {
 		settings.MhType = mhtype

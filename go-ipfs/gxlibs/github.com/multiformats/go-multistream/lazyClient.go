@@ -38,7 +38,7 @@ func NewMultistream(c io.ReadWriteCloser, proto string) Multistream {
 //
 // It *does not* block writes waiting for the other end to respond. Instead, it
 // simply assumes the negotiation went successfully and starts writing data.
-// See: https://github.com/multiformats/go-multistream/issues/20
+// See: https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multistream/issues/20
 type lazyClientConn struct {
 	// Used to ensure we only trigger the write half of the handshake once.
 	rhandshakeOnce sync.Once

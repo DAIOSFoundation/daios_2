@@ -106,7 +106,7 @@ must parse:
 
 Since there are many applications where we want to jump straight to the
 multihash content (for example, when doing CAS sharding -- see the
-[disclaimer](https://github.com/multiformats/multihash#disclaimers) about
+[disclaimer](https://github.com/dai/go-ipfs/gxlibs/github.com/multiformats/multihash#disclaimers) about
 bias in leading bytes), this overhead may be interesting.
 
 How much this overhead is significant is hard to say from microbenchmarking;
