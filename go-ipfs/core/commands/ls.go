@@ -10,15 +10,15 @@ import (
 	e "github.com/dai/go-ipfs/core/commands/e"
 	iface "github.com/dai/go-ipfs/core/coreapi/interface"
 
-	offline "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-exchange-offline"
-	cid "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-cid"
 	blockservice "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-blockservice"
+	cid "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-cid"
+	"github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmdkit"
+	offline "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-exchange-offline"
+	ipld "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipld-format"
+	merkledag "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-merkledag"
 	unixfs "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-unixfs"
 	uio "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-unixfs/io"
 	unixfspb "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-unixfs/pb"
-	merkledag "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-merkledag"
-	ipld "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipld-format"
-	"github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmdkit"
 )
 
 type LsLink struct {

@@ -19,5 +19,6 @@ func Cat(ctx context.Context, n *core.IpfsNode, pstr string) (uio.DagReader, err
 	if err != nil {
 		return nil, err
 	}
+
 	return uio.NewDagReader(ctx, dagNode, n.DAG)
 }

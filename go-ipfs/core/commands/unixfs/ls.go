@@ -9,10 +9,10 @@ import (
 	cmdenv "github.com/dai/go-ipfs/core/commands/cmdenv"
 	iface "github.com/dai/go-ipfs/core/coreapi/interface"
 
-	unixfs "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-unixfs"
+	cmdkit "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmdkit"
 	cmds "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmds"
 	merkledag "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-merkledag"
-	cmdkit "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmdkit"
+	unixfs "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-unixfs"
 )
 
 type LsLink struct {

@@ -30,11 +30,20 @@ import (
 	dcore "github.com/dai/core"
 	version "github.com/dai/go-ipfs"
 	"github.com/dai/go-ipfs/core"
+	ls "github.com/dai/go-ipfs/core/commands"
+	"github.com/dai/go-ipfs/core/coreapi"
+	iface "github.com/dai/go-ipfs/core/coreapi/interface"
 	corehttp "github.com/dai/go-ipfs/core/corehttp"
 	"github.com/dai/go-ipfs/core/corerepo"
 	"github.com/dai/go-ipfs/core/coreunix"
+	cid "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-cid"
 	cmdsHttp "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmds/http"
 	config "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-config"
+	ipld "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipld-format"
+	merkledag "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-merkledag"
+	unixfs "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-unixfs"
+	uio "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-unixfs/io"
+	unixfspb "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-unixfs/pb"
 	inet "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-net"
 	ma "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr"
 	madns "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr-dns"
@@ -483,14 +492,17 @@ func serveHTTPApi(ctx types.Context) (<-chan error, error) {
 
 		listeners = append(listeners, apiLis)
 	}
+
 	gatewayOpt := corehttp.GatewayOption(true, "/ipfs", "/ipns")
+	dirb := uio.NewDirectory(ctx.Node.DAG)
 
 	var opts = []corehttp.ServeOption{
 		corehttp.MetricsCollectionOption("api"),
 		corehttp.CheckVersionOption(),
 		gatewayOpt,
-		uploadMux("/upload"),
+		uploadMux("/upload", dirb),
 		downloadMux("/download"),
+		listMux("/list"),
 	}
 
 	APIPath := "/api/v0"
@@ -585,6 +597,88 @@ func serveHTTPApi(ctx types.Context) (<-chan error, error) {
 	return errc, nil
 }
 
+func uploadMux(path string, dirb uio.Directory) corehttp.ServeOption {
+	return func(node *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
+		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+
+			if r.Method != "POST" {
+				return
+			}
+			var fileHeader *multipart.FileHeader
+			var e error
+
+			file, fileHeader, e := r.FormFile("file")
+			if e != nil {
+				fmt.Errorf("Failed FormFile:", e)
+				fmt.Println(file)
+				return
+			}
+
+			/*
+				filePath := "./files/" + fileHeader.Filename
+
+				fmt.Println("filepath :", filePath)
+
+				s, err := coreunix.Add(node, file)
+				if err != nil {
+					fmt.Errorf("Failed coreunix.Add", err)
+					return
+				}
+
+				fname := filepath.Base(filePath)
+			*/
+
+			s, err := coreunix.Add(node, file)
+			if err != nil {
+				fmt.Errorf("Failed coreunix.Add", err)
+				return
+			}
+
+			c, err := cid.Decode(s)
+			if err != nil {
+				fmt.Errorf("Failed cid.Decode", err)
+				return
+			}
+
+			n, err := node.DAG.Get(node.Context(), c)
+			if err != nil {
+				fmt.Errorf("Failed node.DAG.Get", err)
+				return
+			}
+
+			if err := dirb.AddChild(node.Context(), fileHeader.Filename, n); err != nil {
+				fmt.Errorf("Failed dirb.AddChild", err)
+				return
+			}
+
+			dir, err := dirb.GetNode()
+
+			fmt.Println("dir1:", dir.Cid())
+			if err := node.Pinning.Unpin(node.Context(), dir.Cid(), true); err != nil {
+				fmt.Errorf("Failed dirb.GetNode", err)
+				return
+			}
+			/*
+
+				if err := node.Pinning.Pin(node.Context(), dir, true); err != nil {
+					fmt.Errorf("Failed dirb.GetNode", err)
+					return
+				}
+				if err := node.Pinning.Flush(); err != nil {
+					fmt.Errorf("Failed dirb.GetNode", err)
+					return
+				}
+			*/
+			data, err := json.Marshal(dir.Cid())
+			fmt.Println("dir2:", dir.Cid())
+			w.Write(data)
+
+		})
+		return mux, nil
+	}
+}
+
+/*
 func uploadMux(path string) corehttp.ServeOption {
 	return func(node *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
@@ -633,10 +727,11 @@ func uploadMux(path string) corehttp.ServeOption {
 
 			fmt.Println("filepath :", filePath)
 
-			k, err := coreunix.AddR(node, filePath)
+			k, _, err := coreunix.AddWrapped(node, strings.NewReader("_"), "test.jpg")
+			//k, _, err := coreunix.Add(node, strings.NewReader("_"), "test.jpg")
 
 			if err != nil {
-				log.Fatalf("Failed to coreunix.AddR: %v", err)
+				log.Fatalf("Failed to coreunix.Add: %v", err)
 			}
 			fmt.Println("key :", k)
 
@@ -658,6 +753,7 @@ func uploadMux(path string) corehttp.ServeOption {
 		return mux, nil
 	}
 }
+*/
 
 func downloadMux(key string) corehttp.ServeOption {
 	return func(node *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
@@ -673,7 +769,7 @@ func downloadMux(key string) corehttp.ServeOption {
 			rd, err := coreunix.Cat(node.Context(), node, k)
 
 			if err != nil {
-				log.Fatalf("Failed coreunix.AddR: %v", err)
+				log.Fatalf("Failed coreunix.Cat: %v", err)
 				return
 			}
 
@@ -712,6 +808,116 @@ func downloadMux(key string) corehttp.ServeOption {
 
 			file.Seek(0, 0)
 			io.Copy(w, file)
+
+		})
+		return mux, nil
+	}
+}
+
+func listMux(key string) corehttp.ServeOption {
+	return func(node *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
+		mux.HandleFunc(key, func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != "GET" {
+				return
+			}
+			api := coreapi.NewCoreAPI(node)
+
+			var paths []string
+
+			paths = append(paths, r.FormValue("key"))
+
+			var dagnodes []ipld.Node
+			for _, fpath := range paths {
+				p, err := iface.ParsePath(fpath)
+				fmt.Println(p)
+				if err != nil {
+					fmt.Errorf("Failed: iface.ParsePath", err)
+					return
+				}
+
+				dagnode, err := api.ResolveNode(node.Context(), p)
+				if err != nil {
+					fmt.Errorf("Failed: api.ResolveNode", err)
+					return
+				}
+				dagnodes = append(dagnodes, dagnode)
+			}
+
+			output := make([]ls.LsObject, len(paths))
+
+			ng := merkledag.NewSession(node.Context(), node.DAG)
+
+			ro := merkledag.NewReadOnlyDagService(ng)
+
+			for i, dagnode := range dagnodes {
+				dir, err := uio.NewDirectoryFromNode(ro, dagnode)
+
+				if err != nil && err != uio.ErrNotADir {
+					fmt.Errorf("Failed: uio", err)
+					return
+				}
+
+				var links []*ipld.Link
+				if dir == nil {
+					links = dagnode.Links()
+				} else {
+					links, err = dir.Links(node.Context())
+					if err != nil {
+						fmt.Errorf("Failed: Links", err)
+						return
+					}
+				}
+
+				output[i] = ls.LsObject{
+					Hash:  paths[i],
+					Links: make([]ls.LsLink, len(links)),
+				}
+
+				for j, link := range links {
+					t := unixfspb.Data_DataType(-1)
+
+					switch link.Cid.Type() {
+					case cid.Raw:
+						// No need to check with raw leaves
+						t = unixfs.TFile
+					case cid.DagProtobuf:
+						linkNode, err := link.GetNode(node.Context(), node.DAG)
+						if err == ipld.ErrNotFound {
+							// not an error
+							linkNode = nil
+						} else if err != nil {
+							fmt.Errorf("Failed: GetNode", err)
+							return
+
+						}
+
+						if pn, ok := linkNode.(*merkledag.ProtoNode); ok {
+							d, err := unixfs.FSNodeFromBytes(pn.Data())
+							if err != nil {
+								fmt.Errorf("Failed: FSNodeFromBytes", err)
+								return
+							}
+							t = d.Type()
+						}
+					}
+					output[i].Links[j] = ls.LsLink{
+						Name: link.Name,
+						Hash: link.Cid.String(),
+						Size: link.Size,
+						Type: t,
+					}
+
+					fmt.Println(output[i].Links[j])
+				}
+			}
+
+			data, err := json.Marshal(output)
+
+			w.Write(data)
+
+			if err != nil {
+				panic(err)
+			}
 
 		})
 		return mux, nil
@@ -859,6 +1065,13 @@ func addDefaultAssets(out io.Writer, repoRoot string) error {
 	if err != nil {
 		return err
 	}
+	/*
+		dkey, err := assets.SeedInitDocs(nd)
+		if err != nil {
+			return fmt.Errorf("init: seeding init docs failed: %s", err)
+		}
+		fmt.Println("dkey :", dkey)
+	*/
 	defer nd.Close()
 
 	return err
