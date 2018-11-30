@@ -32,7 +32,6 @@ func Pick() {
 
 func Mine(daios *Daios, Address types.Address) {
 	mutex := *daios.Mutex()
-
 	if len(*daios.txPool.queue) > 0 {
 
 		mutex.Lock()

@@ -383,16 +383,6 @@ func subscribe(node *core.IpfsNode, address types.Address) (<-chan error, error)
 			sdb := *types.CS.DB()
 			sdb.Sync(b.States)
 
-			jsonChain, err := json.Marshal(daios.BlockChain())
-			if err != nil {
-				errc <- err
-			}
-
-			err = ioutil.WriteFile("./chain.json", jsonChain, 0600)
-			if err != nil {
-				errc <- err
-			}
-
 		}
 	}()
 
@@ -503,6 +493,7 @@ func serveHTTPApi(ctx types.Context) (<-chan error, error) {
 		uploadMux("/upload", dirb),
 		downloadMux("/download"),
 		listMux("/list"),
+		blockMux("/block"),
 	}
 
 	APIPath := "/api/v0"
@@ -597,6 +588,23 @@ func serveHTTPApi(ctx types.Context) (<-chan error, error) {
 	return errc, nil
 }
 
+func blockMux(key string) corehttp.ServeOption {
+	return func(node *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
+		mux.HandleFunc(key, func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != "GET" {
+				return
+			}
+			jsonChain, err := json.Marshal(daios.BlockChain())
+			if err != nil {
+				return
+			}
+			w.Write(jsonChain)
+
+		})
+		return mux, nil
+	}
+}
+
 func uploadMux(path string, dirb uio.Directory) corehttp.ServeOption {
 	return func(node *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
@@ -613,52 +621,34 @@ func uploadMux(path string, dirb uio.Directory) corehttp.ServeOption {
 				fmt.Println(file)
 				return
 			}
-
 			/*
-				filePath := "./files/" + fileHeader.Filename
-
-				fmt.Println("filepath :", filePath)
-
 				s, err := coreunix.Add(node, file)
 				if err != nil {
 					fmt.Errorf("Failed coreunix.Add", err)
 					return
 				}
 
-				fname := filepath.Base(filePath)
-			*/
+				c, err := cid.Decode(s)
+				if err != nil {
+					fmt.Errorf("Failed cid.Decode", err)
+					return
+				}
 
-			s, err := coreunix.Add(node, file)
-			if err != nil {
-				fmt.Errorf("Failed coreunix.Add", err)
-				return
-			}
+				n, err := node.DAG.Get(node.Context(), c)
+				if err != nil {
+					fmt.Errorf("Failed node.DAG.Get", err)
+					return
+				}
 
-			c, err := cid.Decode(s)
-			if err != nil {
-				fmt.Errorf("Failed cid.Decode", err)
-				return
-			}
+				if err := dirb.AddChild(node.Context(), fileHeader.Filename, n); err != nil {
+					fmt.Errorf("Failed dirb.AddChild", err)
+					return
+				}
 
-			n, err := node.DAG.Get(node.Context(), c)
-			if err != nil {
-				fmt.Errorf("Failed node.DAG.Get", err)
-				return
-			}
+				dir, err := dirb.GetNode()
 
-			if err := dirb.AddChild(node.Context(), fileHeader.Filename, n); err != nil {
-				fmt.Errorf("Failed dirb.AddChild", err)
-				return
-			}
+				fmt.Println("dir1:", dir.Cid())
 
-			dir, err := dirb.GetNode()
-
-			fmt.Println("dir1:", dir.Cid())
-			if err := node.Pinning.Unpin(node.Context(), dir.Cid(), true); err != nil {
-				fmt.Errorf("Failed dirb.GetNode", err)
-				return
-			}
-			/*
 
 				if err := node.Pinning.Pin(node.Context(), dir, true); err != nil {
 					fmt.Errorf("Failed dirb.GetNode", err)
@@ -669,9 +659,49 @@ func uploadMux(path string, dirb uio.Directory) corehttp.ServeOption {
 					return
 				}
 			*/
+
+			k, n, err := coreunix.AddWrapped(node, file, fileHeader.Filename)
+
+			if err := dirb.AddChild(node.Context(), fileHeader.Filename, n); err != nil {
+				fmt.Errorf("Failed dirb.AddChild", err)
+				return
+			}
+
+			dir, err := dirb.GetNode()
+
+			if err := node.Pinning.Pin(node.Context(), dir, true); err != nil {
+				fmt.Errorf("Failed dirb.GetNode", err)
+				return
+			}
+
+			if err := node.Pinning.Flush(); err != nil {
+				fmt.Errorf("Failed dirb.GetNode", err)
+				return
+			}
+
+			if err != nil {
+				log.Fatalf("Failed to coreunix.Add: %v", err)
+			}
+			fmt.Println("key :", k)
+
 			data, err := json.Marshal(dir.Cid())
-			fmt.Println("dir2:", dir.Cid())
+			fmt.Println("dir:", dir.Cid())
+
 			w.Write(data)
+
+			var mutex sync.Mutex
+
+			mutex.Lock()
+
+			d := types.NewTransaction(types.NewAddress(""), types.NewAddress(""), 0, k)
+			d.Nonce = i
+			d.Data.Hash = d.Hash()
+			mutex.Unlock()
+
+			if err := node.PubSub.Publish(txTopic, d.MarshalJSON()); err != nil {
+				panic(err)
+			}
+			i++
 
 		})
 		return mux, nil

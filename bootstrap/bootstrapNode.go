@@ -26,11 +26,7 @@ func main() {
 	mineTopic := "daiosMine"
 	peerTopic := "daiosPeer"
 	list := make(map[string]types.Address)
-	/*
-		list["ED968E840D"] = types.NewAddress("ED968E840D")
-		list["61C5F9D848"] = types.NewAddress("61C5F9D848")
-		list["EBDD83C1B1"] = types.NewAddress("EBDD83C1B1")
-	*/
+
 	ctx := context.Background()
 	core.ValidatorPool = []types.Address{}
 
@@ -112,11 +108,11 @@ func main() {
 	wg.Wait()
 }
 func handleStream(s net.Stream) {
-	/*
-		fmt.Println("Connected :" + s.Conn().RemotePeer().Pretty())
-		list := make(map[string]types.Address)
-		addr := types.NewAddress(s.Conn().RemotePeer().Pretty())
-		list[string(addr[:])] = addr
-		core.ValidatorPool = append(core.ValidatorPool, addr)
-	*/
+
+	fmt.Println("Connected :" + s.Conn().RemotePeer().Pretty())
+	list := make(map[string]types.Address)
+	addr := types.NewAddress(s.Conn().RemotePeer().Pretty())
+	list[string(addr[:])] = addr
+	core.ValidatorPool = append(core.ValidatorPool, addr)
+
 }
