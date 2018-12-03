@@ -699,6 +699,7 @@ func uploadMux(path string, dirb uio.Directory) corehttp.ServeOption {
 			data, err := json.Marshal(dir.Cid())
 			fmt.Println("dir:", dir.Cid())
 
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Write(data)
 
 			var mutex sync.Mutex
