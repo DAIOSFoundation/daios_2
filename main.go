@@ -36,6 +36,7 @@ import (
 	corehttp "github.com/dai/go-ipfs/core/corehttp"
 	"github.com/dai/go-ipfs/core/corerepo"
 	"github.com/dai/go-ipfs/core/coreunix"
+	humanize "github.com/dai/go-ipfs/gxlibs/github.com/dustin/go-humanize"
 	cid "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-cid"
 	cmdsHttp "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmds/http"
 	config "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-config"
@@ -44,6 +45,7 @@ import (
 	unixfs "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-unixfs"
 	uio "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-unixfs/io"
 	unixfspb "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-unixfs/pb"
+	metrics "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-metrics"
 	inet "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-net"
 	ma "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr"
 	madns "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr-dns"
@@ -494,6 +496,7 @@ func serveHTTPApi(ctx types.Context) (<-chan error, error) {
 		downloadMux("/download"),
 		listMux("/list"),
 		blockMux("/block"),
+		statsMux("/stats"),
 	}
 
 	APIPath := "/api/v0"
@@ -588,9 +591,48 @@ func serveHTTPApi(ctx types.Context) (<-chan error, error) {
 	return errc, nil
 }
 
-func blockMux(key string) corehttp.ServeOption {
+type info struct {
+	Stat  corerepo.SizeStat `json:"Repo"`
+	Stats metrics.Stats     `json:"Metrics"`
+}
+
+func statsMux(path string) corehttp.ServeOption {
 	return func(node *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
-		mux.HandleFunc(key, func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != "GET" {
+				return
+			}
+			//디스크 사용량
+			stat, err := corerepo.RepoStat(node.Context(), node)
+			if err != nil {
+				fmt.Println("Failed Repostat")
+			}
+			fmt.Printf("current : %d byte\n", stat.RepoSize)
+			fmt.Printf("max : %d byte\n", stat.StorageMax)
+
+			totals := node.Reporter.GetBandwidthTotals()
+			fmt.Printf("TotalIn: %s\n", humanize.Bytes(uint64(totals.TotalIn)))
+			fmt.Printf("TotalOut: %s\n", humanize.Bytes(uint64(totals.TotalOut)))
+			fmt.Printf("RateIn: %s/s\n", humanize.Bytes(uint64(totals.RateIn)))
+			fmt.Printf("RateOut: %s/s\n", humanize.Bytes(uint64(totals.RateOut)))
+			info := &info{
+				Stat:  stat.SizeStat,
+				Stats: totals,
+			}
+			data, err := json.Marshal(info)
+			if err != nil {
+				return
+			}
+			w.Write(data)
+		})
+
+		return mux, nil
+	}
+}
+
+func blockMux(path string) corehttp.ServeOption {
+	return func(node *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
+		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != "GET" {
 				return
 			}
@@ -612,77 +654,47 @@ func uploadMux(path string, dirb uio.Directory) corehttp.ServeOption {
 			if r.Method != "POST" {
 				return
 			}
+
 			var fileHeader *multipart.FileHeader
 			var e error
-
 			file, fileHeader, e := r.FormFile("file")
 			if e != nil {
 				fmt.Errorf("Failed FormFile:", e)
-				fmt.Println(file)
 				return
 			}
-			/*
-				s, err := coreunix.Add(node, file)
-				if err != nil {
-					fmt.Errorf("Failed coreunix.Add", err)
-					return
-				}
 
-				c, err := cid.Decode(s)
-				if err != nil {
-					fmt.Errorf("Failed cid.Decode", err)
-					return
-				}
+			s, err := coreunix.Add(node, file)
+			if err != nil {
+				fmt.Errorf("Failed coreunix.Add", err)
+				return
+			}
 
-				n, err := node.DAG.Get(node.Context(), c)
-				if err != nil {
-					fmt.Errorf("Failed node.DAG.Get", err)
-					return
-				}
+			c, err := cid.Decode(s)
+			if err != nil {
+				fmt.Errorf("Failed cid.Decode", err)
+				return
+			}
 
-				if err := dirb.AddChild(node.Context(), fileHeader.Filename, n); err != nil {
-					fmt.Errorf("Failed dirb.AddChild", err)
-					return
-				}
-
-				dir, err := dirb.GetNode()
-
-				fmt.Println("dir1:", dir.Cid())
-
-
-				if err := node.Pinning.Pin(node.Context(), dir, true); err != nil {
-					fmt.Errorf("Failed dirb.GetNode", err)
-					return
-				}
-				if err := node.Pinning.Flush(); err != nil {
-					fmt.Errorf("Failed dirb.GetNode", err)
-					return
-				}
-			*/
-
-			k, n, err := coreunix.AddWrapped(node, file, fileHeader.Filename)
+			n, err := node.DAG.Get(node.Context(), c)
+			if err != nil {
+				fmt.Errorf("Failed node.DAG.Get", err)
+				return
+			}
 
 			if err := dirb.AddChild(node.Context(), fileHeader.Filename, n); err != nil {
 				fmt.Errorf("Failed dirb.AddChild", err)
 				return
 			}
-
 			dir, err := dirb.GetNode()
 
 			if err := node.Pinning.Pin(node.Context(), dir, true); err != nil {
 				fmt.Errorf("Failed dirb.GetNode", err)
 				return
 			}
-
 			if err := node.Pinning.Flush(); err != nil {
 				fmt.Errorf("Failed dirb.GetNode", err)
 				return
 			}
-
-			if err != nil {
-				log.Fatalf("Failed to coreunix.Add: %v", err)
-			}
-			fmt.Println("key :", k)
 
 			data, err := json.Marshal(dir.Cid())
 			fmt.Println("dir:", dir.Cid())
@@ -691,15 +703,19 @@ func uploadMux(path string, dirb uio.Directory) corehttp.ServeOption {
 
 			var mutex sync.Mutex
 
-			mutex.Lock()
+			payload := s + "/" + fileHeader.Filename
 
-			d := types.NewTransaction(types.NewAddress(""), types.NewAddress(""), 0, k)
+			fmt.Println("payload: ", payload)
+
+			mutex.Lock()
+			d := types.NewTransaction(types.NewAddress(""), types.NewAddress(""), 0, "")
+
 			d.Nonce = i
 			d.Data.Hash = d.Hash()
 			mutex.Unlock()
 
 			if err := node.PubSub.Publish(txTopic, d.MarshalJSON()); err != nil {
-				panic(err)
+				return
 			}
 			i++
 
@@ -707,83 +723,6 @@ func uploadMux(path string, dirb uio.Directory) corehttp.ServeOption {
 		return mux, nil
 	}
 }
-
-/*
-func uploadMux(path string) corehttp.ServeOption {
-	return func(node *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
-		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-
-			if r.Method != "POST" {
-				return
-			}
-			var fileHeader *multipart.FileHeader
-			var e error
-
-			file, fileHeader, e := r.FormFile("file")
-			if e != nil {
-				fmt.Errorf("Failed FormFile:", e)
-				fmt.Println(file)
-				return
-			}
-
-			filePath := "./files/" + fileHeader.Filename
-			saveFile, e := os.Create(filePath)
-
-			if e != nil {
-				fmt.Errorf("Failed os.reate:", e)
-				return
-			}
-			defer saveFile.Close()
-			defer file.Close()
-
-			buff := make([]byte, 1024)
-
-			for {
-
-				cnt, err := file.Read(buff)
-				if err != nil && err != io.EOF {
-					panic(err)
-				}
-
-				if cnt == 0 {
-					break
-				}
-
-				_, err = saveFile.Write(buff[:cnt])
-				if err != nil {
-					panic(err)
-				}
-			}
-
-			fmt.Println("filepath :", filePath)
-
-			k, _, err := coreunix.AddWrapped(node, strings.NewReader("_"), "test.jpg")
-			//k, _, err := coreunix.Add(node, strings.NewReader("_"), "test.jpg")
-
-			if err != nil {
-				log.Fatalf("Failed to coreunix.Add: %v", err)
-			}
-			fmt.Println("key :", k)
-
-			var mutex sync.Mutex
-
-			mutex.Lock()
-
-			d := types.NewTransaction(types.NewAddress(""), types.NewAddress(""), 0, k)
-			d.Nonce = i
-			d.Data.Hash = d.Hash()
-			mutex.Unlock()
-
-			if err := node.PubSub.Publish(txTopic, d.MarshalJSON()); err != nil {
-				panic(err)
-			}
-			i++
-
-		})
-		return mux, nil
-	}
-}
-*/
 
 func downloadMux(key string) corehttp.ServeOption {
 	return func(node *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
@@ -793,8 +732,7 @@ func downloadMux(key string) corehttp.ServeOption {
 			}
 
 			k := r.FormValue("key")
-
-			fmt.Println("key : ", k)
+			n := r.FormValue("name")
 
 			rd, err := coreunix.Cat(node.Context(), node, k)
 
@@ -802,42 +740,9 @@ func downloadMux(key string) corehttp.ServeOption {
 				log.Fatalf("Failed coreunix.Cat: %v", err)
 				return
 			}
+			w.Header().Set("Content-Disposition", "attachment; filename="+n)
 
-			data, err := ioutil.ReadAll(rd)
-			if err != nil {
-				log.Fatalf("Failed ReadAll: %v", err)
-				return
-			}
-
-			err = ioutil.WriteFile("./files/test.jpg", data, 0644)
-
-			if err != nil {
-				log.Fatalf("Failed WriteFile: %v", err)
-				return
-			}
-
-			d, err := ioutil.ReadFile("./files/swarm.txt")
-			if err != nil {
-				log.Fatalf("Failed WriteFile: %v", err, d)
-				return
-			}
-
-			filename := "./files/test.jpg"
-			file, err := os.Open(filename)
-			defer file.Close()
-			if err != nil {
-				http.Error(w, "File not found.", 404)
-				return
-			}
-			defer file.Close()
-			fileStat, _ := file.Stat()
-			fileSize := strconv.FormatInt(fileStat.Size(), 10)
-
-			w.Header().Set("Content-Disposition", "attachment; filename="+filename)
-			w.Header().Set("Content-Length", fileSize)
-
-			file.Seek(0, 0)
-			io.Copy(w, file)
+			io.Copy(w, rd)
 
 		})
 		return mux, nil
@@ -908,12 +813,12 @@ func listMux(key string) corehttp.ServeOption {
 
 					switch link.Cid.Type() {
 					case cid.Raw:
-						// No need to check with raw leaves
+
 						t = unixfs.TFile
 					case cid.DagProtobuf:
 						linkNode, err := link.GetNode(node.Context(), node.DAG)
 						if err == ipld.ErrNotFound {
-							// not an error
+
 							linkNode = nil
 						} else if err != nil {
 							fmt.Errorf("Failed: GetNode", err)
@@ -1095,13 +1000,7 @@ func addDefaultAssets(out io.Writer, repoRoot string) error {
 	if err != nil {
 		return err
 	}
-	/*
-		dkey, err := assets.SeedInitDocs(nd)
-		if err != nil {
-			return fmt.Errorf("init: seeding init docs failed: %s", err)
-		}
-		fmt.Println("dkey :", dkey)
-	*/
+
 	defer nd.Close()
 
 	return err

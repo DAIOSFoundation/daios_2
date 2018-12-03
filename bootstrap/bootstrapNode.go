@@ -108,11 +108,12 @@ func main() {
 	wg.Wait()
 }
 func handleStream(s net.Stream) {
-
+	/*
 	fmt.Println("Connected :" + s.Conn().RemotePeer().Pretty())
 	list := make(map[string]types.Address)
 	addr := types.NewAddress(s.Conn().RemotePeer().Pretty())
 	list[string(addr[:])] = addr
 	core.ValidatorPool = append(core.ValidatorPool, addr)
+	*/
 
 }
