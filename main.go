@@ -623,6 +623,7 @@ func statsMux(path string) corehttp.ServeOption {
 			if err != nil {
 				return
 			}
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Write(data)
 		})
 
@@ -640,6 +641,7 @@ func blockMux(path string) corehttp.ServeOption {
 			if err != nil {
 				return
 			}
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Write(jsonChain)
 
 		})
@@ -848,7 +850,7 @@ func listMux(key string) corehttp.ServeOption {
 			}
 
 			data, err := json.Marshal(output)
-
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Write(data)
 
 			if err != nil {
