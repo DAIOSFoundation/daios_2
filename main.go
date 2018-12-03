@@ -708,7 +708,7 @@ func uploadMux(path string, dirb uio.Directory) corehttp.ServeOption {
 			fmt.Println("payload: ", payload)
 
 			mutex.Lock()
-			d := types.NewTransaction(types.NewAddress(""), types.NewAddress(""), 0, "")
+			d := types.NewTransaction(types.NewAddress(""), types.NewAddress(""), 0, payload)
 
 			d.Nonce = i
 			d.Data.Hash = d.Hash()
