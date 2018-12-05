@@ -14,7 +14,6 @@ import (
 	pb "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-kad-dht/pb"
 	providers "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-kad-dht/providers"
 
-	proto "github.com/gogo/protobuf/proto"
 	cid "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-cid"
 	ds "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-datastore"
 	logging "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-log"
@@ -31,6 +30,7 @@ import (
 	recpb "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-record/pb"
 	routing "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-routing"
 	base32 "github.com/dai/go-ipfs/gxlibs/github.com/whyrusleeping/base32"
+	proto "github.com/gogo/protobuf/proto"
 )
 
 var log = logging.Logger("dht")

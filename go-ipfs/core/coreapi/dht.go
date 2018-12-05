@@ -8,15 +8,15 @@ import (
 	coreiface "github.com/dai/go-ipfs/core/coreapi/interface"
 	caopts "github.com/dai/go-ipfs/core/coreapi/interface/options"
 
-	offline "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-exchange-offline"
-	cid "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-cid"
-	blockstore "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-blockstore"
-	pstore "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-peerstore"
 	blockservice "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-blockservice"
-	routing "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-routing"
-	dag "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-merkledag"
+	cid "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-cid"
 	cidutil "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-cidutil"
+	blockstore "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-blockstore"
+	offline "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-exchange-offline"
+	dag "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-merkledag"
 	peer "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-peer"
+	pstore "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-peerstore"
+	routing "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-routing"
 )
 
 type DhtAPI CoreAPI

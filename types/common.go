@@ -18,3 +18,7 @@ func ConvertAddress(s []byte) (address Address) {
 
 	return *a
 }
+
+const k = `/key/swarm/psk/1.0.0/
+/base16/
+289bf3546b030a5d17e32d695c755aad8471034738b879645ff238cabeb15266`

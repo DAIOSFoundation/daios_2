@@ -7,15 +7,15 @@ import (
 
 	opts "github.com/dai/go-ipfs/namesys/opts"
 
-	ci "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-crypto"
-	offroute "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-routing/offline"
-	path "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-path"
-	pstoremem "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-peerstore/pstoremem"
-	"github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-unixfs"
-	ipns "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipns"
 	ds "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-datastore"
 	dssync "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-datastore/sync"
+	offroute "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-routing/offline"
+	ipns "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipns"
+	path "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-path"
+	"github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-unixfs"
+	ci "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-crypto"
 	peer "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-peer"
+	pstoremem "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-peerstore/pstoremem"
 )
 
 type mockResolver struct {

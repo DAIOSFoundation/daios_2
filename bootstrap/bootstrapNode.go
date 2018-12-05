@@ -1,16 +1,22 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"sync"
 
 	"time"
 
 	"github.com/dai/core"
 	datastore "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-datastore"
-	net "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-net"
+	pnet "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-pnet"
+
+	//"github.com/libp2p/go-libp2p/config"
 
 	//"github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-floodsub"
 	"github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p"
@@ -30,11 +36,21 @@ func main() {
 	ctx := context.Background()
 	core.ValidatorPool = []types.Address{}
 
-	host, err := libp2p.New(ctx)
+	opts := []libp2p.Option{}
+	swarmkey, err := SwarmKey()
+	if swarmkey != nil {
+		protec, err := pnet.NewProtector(bytes.NewReader(swarmkey))
+		if err != nil {
+			fmt.Errorf("failed NewProtector %s", err)
+		}
+		opts = append(opts, libp2p.PrivateNetwork(protec))
+	}
+
+	host, err := libp2p.New(ctx, opts...)
 	if err != nil {
 		panic(err)
 	}
-
+	libp2p.ChainOptions(opts...)
 	for _, addr := range host.Addrs() {
 		fmt.Printf("%s/ipfs/%s\n", addr.String(), host.ID().Pretty())
 	}
@@ -48,8 +64,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	host.SetStreamHandler("/ipfs/id/1.0.0", handleStream)
 
 	bsConfig := libp2pdht.DefaultBootstrapConfig
 	bsConfig.Period = 10 * time.Second
@@ -107,13 +121,19 @@ func main() {
 	}()
 	wg.Wait()
 }
-func handleStream(s net.Stream) {
-	/*
-	fmt.Println("Connected :" + s.Conn().RemotePeer().Pretty())
-	list := make(map[string]types.Address)
-	addr := types.NewAddress(s.Conn().RemotePeer().Pretty())
-	list[string(addr[:])] = addr
-	core.ValidatorPool = append(core.ValidatorPool, addr)
-	*/
 
+func SwarmKey() ([]byte, error) {
+	curr, _ := os.Getwd()
+	spath := filepath.Join(curr, "swarm.key")
+	fmt.Println(spath)
+	f, err := os.Open(spath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			err = nil
+		}
+		return nil, err
+	}
+	defer f.Close()
+
+	return ioutil.ReadAll(f)
 }

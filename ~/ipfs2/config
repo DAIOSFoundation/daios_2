@@ -1,0 +1,120 @@
+{
+  "Identity": {
+    "PeerID": "QmNsLMKVfT3TYQJgzCnLsvijAB7jp5hH7fxAwAu4tajZ1T",
+    "PrivKey": "CAASqAkwggSkAgEAAoIBAQD8lMWwb2quTi1Lb2KVm5q51PTjVHgI6T6coj9cbkUnyF1pCWaqPKt4YjQzbeDvPLKOLJX7Xee65Luu8/NQGP/IAcBi4zJhEb6VA+ALBWRl76s9MGGOdMmAdwhPDH1SSO4Vz+0RdFEypEiyTPlyINUJSoLF2tyw/DOzhff0Al8q0czrlG+oJkvCTc3qf+Eq293lP4FSp5SmR3Mbe3omBjKxchYYAQUuK8rN099kPbxSl08L8JwGWzWITt2LrVCWJv80pnUvWLV8cz8TYcYkmFc0v/SABAEQ5YeQu6C2u3GJRrc7i0KAo6IGd8uKJBcslj83wAGrG5kW9G/gbZXQeFCzAgMBAAECggEAQWA0hwVfpHwhpyvOZZDgDId9VzXu18efaCVqpv73sWNgIibHxvprG363qjQfi2y3fqs1qtlUeIBpv8/uw2WlFty1MiNCT/Oq06EsJU4g/W16ch0KszexTCoDIYrHCTxNO6IU53am6aeyFUxtKEgtO/loPdP3WWv96dKcKjFO9qLRd7fXdjj3Wl27KOomoB1tiZ3je4cZtMDcDS1ffOBK0lFFyLqk+dSp5rb+y/v9lNCiBaxjc4BrLUpMnvj4bKCWta/8BpQVoXTpNtfzUzOE/gKqbazP4vhRDh9KeZIlOxxwXGUAXikS7r0mzWMIQxgrmc0t5zUriYyCyPwKgWCTYQKBgQD9k1625bn4B7HI8u0JBFrHmWvZwzSCJNYuhPv/4mNmXiZTrmN5XTrcPdfG1MkMvZmZIZZuZ54k0Wo2rkmSAu4imf9UWQDsVFUil8SnMWKnr9Pxtr0i7gsnJrFsajoj+youeQHf6Tl3gAtSncBQBkUxf2hLEmczWWrc9NAcXmOjAwKBgQD+/vfX2Osafw5znAXZjMeZwlH0iWOR0jg5b0DScOoM7HHdRpTISAUVU8VCmyex2UM10A5uZSpwgXJF/L2+wyNSIkVt205w3L3cjuncCAIlB7JHU9RvJ8E36qkzfGlqc6kmuhhOjBq4319sy/H2O9iNG/ss9GKuDH8MyxCliYRUkQKBgQDKll2aU+kCzurr96EGjjMUum8e+ETQISv42IgYRD9Tvq5yNqYEhUaMROBKWyARDL1VSS9NH32KPsDT1OS0QaENhekm80C4jxvBWm1jgiImhGQY/f0XlgTVD6W6TxgKPRTTMhwcTtF5tpPVOnE1vfyz8e1Z5OcMcEjfJLvLnmGODwKBgQCVBTSadC6RgYdUkO3qQZe0iBeVLWV/Jres+ROM6GgfvV6dzk3M7inqWNaDImGEUlAw9rI4We7/aOb7d8T74taVfWnN1ch1tMtQRkTtTdDTCzho7tjLTRRiNUVEzYRdrdJAy6jA3qgPOptt3ZI+MKNRc/TKRNgWlz74nwPPehpXwQKBgGaijyoR+B4DBlHSKtcC+eEgqAGyZvNGazZz4fw4E8Vbz2IzafZgs35Ro6TmH62D+ZxiF556/9yCiNitsdqF51Q+lW0CVwu8ZC6ZjlHKiHs5Pbv90grrb2pWas0oOtUQvDEghlwG7MK8XhNCid3arobgjGIh43nKHPhBV3U6/X+0"
+  },
+  "Datastore": {
+    "StorageMax": "10GB",
+    "StorageGCWatermark": 90,
+    "GCPeriod": "1h",
+    "Spec": {
+      "mounts": [
+        {
+          "child": {
+            "path": "blocks",
+            "shardFunc": "/repo/flatfs/shard/v1/next-to-last/2",
+            "sync": true,
+            "type": "flatfs"
+          },
+          "mountpoint": "/blocks",
+          "prefix": "flatfs.datastore",
+          "type": "measure"
+        },
+        {
+          "child": {
+            "compression": "none",
+            "path": "datastore",
+            "type": "levelds"
+          },
+          "mountpoint": "/",
+          "prefix": "leveldb.datastore",
+          "type": "measure"
+        }
+      ],
+      "type": "mount"
+    },
+    "HashOnRead": false,
+    "BloomFilterSize": 0
+  },
+  "Addresses": {
+    "Swarm": [
+      "/ip4/0.0.0.0/tcp/4001",
+      "/ip6/::/tcp/4001"
+    ],
+    "Announce": [],
+    "NoAnnounce": [],
+    "API": "/ip4/127.0.0.1/tcp/5001",
+    "Gateway": "/ip4/127.0.0.1/tcp/8080"
+  },
+  "Mounts": {
+    "IPFS": "/ipfs",
+    "IPNS": "/ipns",
+    "FuseAllowOther": false
+  },
+  "Discovery": {
+    "MDNS": {
+      "Enabled": true,
+      "Interval": 10
+    }
+  },
+  "Routing": {
+    "Type": "dht"
+  },
+  "Ipns": {
+    "RepublishPeriod": "",
+    "RecordLifetime": "",
+    "ResolveCacheSize": 128
+  },
+  "Bootstrap": [],
+  "Gateway": {
+    "HTTPHeaders": {
+      "Access-Control-Allow-Headers": [
+        "X-Requested-With",
+        "Range"
+      ],
+      "Access-Control-Allow-Methods": [
+        "GET"
+      ],
+      "Access-Control-Allow-Origin": [
+        "*"
+      ]
+    },
+    "RootRedirect": "",
+    "Writable": false,
+    "PathPrefixes": [],
+    "APICommands": []
+  },
+  "API": {
+    "HTTPHeaders": {}
+  },
+  "Swarm": {
+    "AddrFilters": null,
+    "DisableBandwidthMetrics": false,
+    "DisableNatPortMap": false,
+    "DisableRelay": false,
+    "EnableRelayHop": false,
+    "ConnMgr": {
+      "Type": "basic",
+      "LowWater": 600,
+      "HighWater": 900,
+      "GracePeriod": "20s"
+    }
+  },
+  "Pubsub": {
+    "Router": "",
+    "DisableSigning": false,
+    "StrictSignatureVerification": false
+  },
+  "Reprovider": {
+    "Interval": "12h",
+    "Strategy": "all"
+  },
+  "Experimental": {
+    "FilestoreEnabled": false,
+    "UrlstoreEnabled": false,
+    "ShardingEnabled": false,
+    "Libp2pStreamMounting": false,
+    "P2pHttpProxy": false,
+    "QUIC": false
+  }
+}

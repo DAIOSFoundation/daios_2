@@ -50,6 +50,7 @@ import (
 	ma "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr"
 	madns "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr-dns"
 	"github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multiaddr-net"
+	msmux "github.com/dai/go-ipfs/gxlibs/github.com/multiformats/go-multistream"
 	"github.com/dai/go-ipfs/gxlibs/github.com/prometheus/client_golang/prometheus"
 	"github.com/dai/go-ipfs/namesys"
 	"github.com/dai/go-ipfs/plugin/loader"
@@ -131,7 +132,6 @@ func main() {
 	}
 
 	if daemonLocked {
-		fmt.Println("ipfs daemon is running")
 		panic("ipfs daemon is running")
 	}
 
@@ -161,6 +161,7 @@ func LoadPlug(repoPath string) error {
 
 func makeSwarmKey(repoPath string) error {
 	key := make([]byte, 32)
+
 	_, err := rand.Read(key)
 	if err != nil {
 		log.Fatalln("While trying to read random source:", err)
@@ -293,14 +294,60 @@ func run(ctx types.Context) error {
 	ctx.Node, err = core.NewNode(ctx.Ctx, ncfg)
 
 	address := types.NewAddress(com.Hash(string(ctx.Node.PeerHost.ID().Pretty())))
+
 	fmt.Println("Address :", types.NewAddress(com.Hash(string(ctx.Node.PeerHost.ID().Pretty()))))
 
 	daios = dcore.New(address)
 
-	if err != nil {
-		log.Fatalf("error from node construction: ", err)
-		return err
+	ctx.Node.PeerHost.Network().SetConnHandler(func(c inet.Conn) {
+		s, err := c.NewStream()
+		if err != nil {
+			log.Fatalln("Failed NewStream", err)
+		}
+
+		var mutex sync.Mutex
+		mutex.Lock()
+
+		bc := *daios.BlockChain()
+		s.Write(bc.MarshalJSON())
+		s.SetProtocol("/ipfs/conn/1.0.0")
+		mutex.Unlock()
+
+		if err := msmux.SelectProtoOrFail("/ipfs/conn/1.0.0", s); err != nil {
+			s.Reset()
+			return
+		}
+
+	})
+
+	ctx.Node.PeerHost.SetStreamHandler("/ipfs/conn/1.0.0", handleStream)
+	for _, p := range ctx.Node.PeerHost.Network().Peers() {
+		if len(ctx.Node.PeerHost.Network().Peers()) > 1 {
+			if p == ctx.Node.PeerHost.ID() {
+				continue
+			}
+			s, err := ctx.Node.PeerHost.NewStream(ctx.Ctx, p, "/ipfs/conn/1.0.0")
+			if err == nil {
+				var mutex sync.Mutex
+				rw := bufio.NewReadWriter(bufio.NewReader(s), bufio.NewWriter(s))
+
+				mutex.Lock()
+
+				response, err := rw.ReadString('\n')
+				if err != nil {
+					log.Println(err)
+				}
+
+				var b dcore.BlockChain
+				spew.Dump(response)
+				json.Unmarshal([]byte(response), &b)
+				daios.BlockChain().SyncChain(&b)
+
+				mutex.Unlock()
+			}
+		}
 	}
+
 	ctx.Node.SetLocal(false)
 
 	if ctx.Node.PNetFingerprint != nil {
@@ -316,7 +363,6 @@ func run(ctx types.Context) error {
 		default:
 		}
 	}()
-	ctx.Node.PeerHost.SetStreamHandler("/ipfs/id/1.0.0", handleStream)
 
 	apiErrc, err := serveHTTPApi(ctx)
 	if err != nil {
@@ -333,10 +379,12 @@ func run(ctx types.Context) error {
 		return err
 	}
 
-	gwErrc, err := serveHTTPGateway(ctx)
-	if err != nil {
-		return err
-	}
+	/*
+		gwErrc, err := serveHTTPGateway(ctx)
+		if err != nil {
+			return err
+		}
+	*/
 
 	prometheus.MustRegister(&corehttp.IpfsNodeCollector{Node: ctx.Node})
 
@@ -344,7 +392,7 @@ func run(ctx types.Context) error {
 		log.Fatalf("Failed to start IPFS node: %v", err)
 	}
 
-	for err := range merge(apiErrc, gcErrc, gwErrc, subsErrc) {
+	for err := range merge(apiErrc, gcErrc, subsErrc) {
 		if err != nil {
 			return err
 		}
@@ -1033,12 +1081,10 @@ func initializeIpnsKeyspace(repoRoot string) error {
 }
 
 func handleStream(s inet.Stream) {
-	fmt.Println(s.Conn().RemotePeer().Pretty)
 	defer s.Close()
 	var mutex sync.Mutex
-
-	rw := bufio.NewReadWriter(bufio.NewReader(s), bufio.NewWriter(s))
 	mutex.Lock()
+	rw := bufio.NewReadWriter(bufio.NewReader(s), bufio.NewWriter(s))
 	bc := *daios.BlockChain()
 	rw.WriteString(string(bc.MarshalJSON()) + "\n")
 	rw.Flush()

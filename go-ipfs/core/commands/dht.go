@@ -10,16 +10,16 @@ import (
 	cmdenv "github.com/dai/go-ipfs/core/commands/cmdenv"
 
 	cid "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-cid"
+	cmdkit "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmdkit"
+	cmds "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmds"
+	ipld "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipld-format"
+	dag "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-merkledag"
 	path "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-path"
+	peer "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-peer"
 	pstore "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-peerstore"
-	b58 "github.com/mr-tron/base58/base58"
 	routing "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-routing"
 	notif "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-routing/notifications"
-	cmds "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmds"
-	dag "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-merkledag"
-	ipld "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipld-format"
-	peer "github.com/dai/go-ipfs/gxlibs/github.com/libp2p/go-libp2p-peer"
-	cmdkit "github.com/dai/go-ipfs/gxlibs/github.com/ipfs/go-ipfs-cmdkit"
+	b58 "github.com/mr-tron/base58/base58"
 )
 
 var ErrNotDHT = errors.New("routing service is not a DHT")
